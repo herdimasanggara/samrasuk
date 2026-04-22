@@ -112,6 +112,19 @@
         white-space: nowrap;
         pointer-events: none;
         min-width: 280px;
+        transition: background 120ms linear;
+      }
+
+      /* When a gate is open, that countdown becomes a clickable button */
+      .countdownBox.gateOpen {
+        pointer-events: auto;
+        cursor: pointer;
+      }
+      .countdownBox.gateOpen:hover {
+        background: #ccc;
+      }
+      .countdownBox.gateOpen:active {
+        background: #aaa;
       }
 
       #aboutHit {
@@ -169,36 +182,6 @@
           var(--portalG1) 46%,
           var(--portalG2) 72%
         );
-      }
-
-      #portalLinkCircle {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-
-        width: 22px;
-        height: 22px;
-        border-radius: 999px;
-        border: 1px solid var(--portalText);
-        background: rgba(255, 255, 255, 0);
-
-        pointer-events: none;
-        opacity: 0;
-        cursor: default;
-      }
-
-      #portalLinkCircle.enabled {
-        pointer-events: auto;
-        cursor: pointer;
-      }
-
-      #portalLinkCircle.enabled:hover {
-        background: rgba(128, 128, 128, 0.25);
-      }
-
-      #portalLinkCircle.enabled:active {
-        background: rgba(128, 128, 128, 0.35);
       }
 
       #trail {
@@ -303,31 +286,24 @@
     <div id="pauseBtn" title="pause / resume"></div>
 
     <div id="countdowns" aria-hidden="true">
-      <div id="countdown1" class="countdownBox">--:--:--</div>
-      <div id="countdown2" class="countdownBox" style="display:none;">--:--:--</div>
+      <div id="countdown1" class="countdownBox" role="button" tabindex="-1">--:--:--</div>
+      <div id="countdown2" class="countdownBox" role="button" tabindex="-1" style="display:none;">--:--:--</div>
     </div>
 
     <div id="aboutHit" title="About"></div>
 
     <div id="aboutPanel">
       <div>
-        RASUK, the Indonesian word for "possess," is Anggara's ongoing framework for inhabiting interfaces, treating familiar platforms as vessels for spiritual occupation. Possession can be a form of resistance, as described in Aihwa Ong's essay, "The Production of Possession,"" which examines how spirit possession among Malay factory women emerges in response to the disciplinary regimes of multinational capitalism. Ong argues that episodes of possession are not remnants of premodern belief, but culturally mediated, embodied forms of protest against the gendered, racialized, and authoritarian conditions of factory labor imposed by global corporations. Anggara relates this to his personal experience in middle school in Indonesia where mass collective possession of distressed students would occur before national exams, which effectively stalled them. Anggara has disrupted the exhibition website in preparation for two performances. On two forthcoming dates, at the appointed hour, this webpage will become a portal to a virtual performance on Zoom which Anggara will possess, or temporarily reorient, everyday software platforms.
+        RASUK, the Indonesian word for &ldquo;possess,&rdquo; is Anggara&rsquo;s ongoing framework for inhabiting interfaces, treating familiar platforms as vessels for spiritual occupation. Possession can be a form of resistance, as described in Aihwa Ong&rsquo;s essay, &ldquo;The Production of Possession,&rdquo; which examines how spirit possession among Malay factory women emerges in response to the disciplinary regimes of multinational capitalism. Ong argues that episodes of possession are not remnants of premodern belief, but culturally mediated, embodied forms of protest against the gendered, racialised, and authoritarian conditions of factory labour imposed by global corporations. Anggara relates this to his personal experience in middle school in Indonesia, where mass collective possession of distressed students would occur before national exams, effectively halting the exams. In RASUK, Anggara disrupts the exhibition website through two performances. During these real-time interventions, this webpage becomes a portal to a virtual performance on Zoom which Anggara will possess, or temporarily reorient, everyday software platforms.
       </div>
     </div>
 
     <div id="portal">
       <div id="portalFill"></div>
-      <a
-        id="portalLinkCircle"
-        href="#"
-        target="_blank"
-        rel="noopener"
-        aria-label="event link"
-      ></a>
     </div>
 
     <script>
-      const LEFT_TEXT = "RASUK   Herdimas Anggara   2024   Performance        ";
+      const LEFT_TEXT = "RASUK   Herdimas Anggara   2025   Performance, Zoom, website        ";
       const ACTION_TEXT = "        About   ☼";
       const TEXT = LEFT_TEXT + ACTION_TEXT;
 
@@ -340,30 +316,26 @@
 
       /* ═══════════════════════════════════════════════
          GATE CONFIGURATION
+         All times given in SGT (UTC+8).
+         SGT = EDT + 12 hours.
          ═══════════════════════════════════════════════ */
 
-      /* ── Gate 1: April 20, 8:50 AM EDT (20:50 SGT) ── */
-      const GATE_1_START = new Date("2026-04-20T20:50:00+08:00").getTime();
-      const GATE_1_END   = new Date("2026-04-20T21:50:00+08:00").getTime();
-      const GATE_1_URL   = "https://vcu.zoom.us/j/85775454688";
+      /* ── Gate 1: April 21, 9:15–10:30 PM EDT
+            → April 22, 9:15–10:30 AM SGT ── */
+      const GATE_1_START = new Date("2026-04-22T09:15:00+08:00").getTime();
+      const GATE_1_END   = new Date("2026-04-22T10:30:00+08:00").getTime();
+      const GATE_1_URL   = "https://vcu.zoom.us/j/5865449907";
 
-      /* Gate 2 fades in 24 h after Gate 1 closes */
+      /* Gate 2 appears in the countdown stack 24 h after Gate 1 closes */
       const GATE_1_SHUT_DURATION = 24 * 60 * 60 * 1000;
       const GATE_2_APPEARS_AT    = GATE_1_END + GATE_1_SHUT_DURATION;
 
-      /* ── Gate 2: TBD (June) — flip GATE_2_TBD to false & fill in once confirmed ── */
-      const GATE_2_TBD   = true;
-      const GATE_2_START  = null;  // e.g. new Date("2026-06-??T19:00:00+08:00").getTime()
-      const GATE_2_END    = null;
-      const GATE_2_URL    = null;
-
-      /* Active portal windows (only confirmed gates open the link) */
-      const WINDOWS_SGT = [
-        { start: GATE_1_START, end: GATE_1_END, url: GATE_1_URL },
-      ];
-      if (!GATE_2_TBD && GATE_2_START && GATE_2_END && GATE_2_URL) {
-        WINDOWS_SGT.push({ start: GATE_2_START, end: GATE_2_END, url: GATE_2_URL });
-      }
+      /* ── Gate 2: April 26, 6:45–8:00 AM EDT
+            → April 26, 6:45–8:00 PM SGT ── */
+      const GATE_2_TBD   = false;
+      const GATE_2_START = new Date("2026-04-26T18:45:00+08:00").getTime();
+      const GATE_2_END   = new Date("2026-04-26T20:00:00+08:00").getTime();
+      const GATE_2_URL   = "https://vcu.zoom.us/j/5865449907";
 
       /* ═══════════════════════════════════════════════ */
 
@@ -413,9 +385,8 @@
         window.location.href = HOME_URL;
       });
 
-      /* PORTAL */
+      /* PORTAL (visual only — no longer clickable) */
       const portal = document.getElementById("portal");
-      const portalLinkCircle = document.getElementById("portalLinkCircle");
 
       let portalX = 0;
       let portalY = 0;
@@ -522,7 +493,6 @@
         portalCovered.clear();
         portalReveal = 0;
         document.documentElement.style.setProperty("--portalReveal", "0");
-        portalLinkCircle.style.opacity = "0";
 
         const col0 = Math.floor(portalX / CELL_W);
         const row0 = Math.floor(portalY / ROW_H);
@@ -576,19 +546,13 @@
           "--portalReveal",
           String(portalReveal)
         );
-
-        const circleOpacity = Math.max(
-          0,
-          Math.min(1, portalReveal * 1.35 - 0.05)
-        );
-        portalLinkCircle.style.opacity = String(circleOpacity);
       }
 
       /* COUNTDOWNS */
       const countdown1 = document.getElementById("countdown1");
       const countdown2 = document.getElementById("countdown2");
 
-      const OPEN_TEXT  = "The Portal Is Open";
+      const OPEN_TEXT  = "The Gate Is Open";
       const SHUT_TEXT  = "The Gate Is Shut";
       const LIMBO_TEXT = "The Gate Is in Limbo";
 
@@ -603,11 +567,29 @@
         return `${pad2(h)}:${pad2(m)}:${pad2(s)}`;
       }
 
+      /* Which gate, if any, is currently open?
+         Returns { openGate: 0 | 1 | 2, url: string | null } */
+      function computeState(nowMs) {
+        if (nowMs >= GATE_1_START && nowMs < GATE_1_END) {
+          return { openGate: 1, url: GATE_1_URL };
+        }
+        if (
+          !GATE_2_TBD &&
+          GATE_2_START != null &&
+          GATE_2_END != null &&
+          nowMs >= GATE_2_START &&
+          nowMs < GATE_2_END
+        ) {
+          return { openGate: 2, url: GATE_2_URL };
+        }
+        return { openGate: 0, url: null };
+      }
+
       function updateCountdowns() {
         const now = Date.now();
 
         /* ────────────────────────────────────
-           PHASE 1 — before the performance
+           PHASE 1 — before Gate 1
            Only Gate 1 countdown visible
            ──────────────────────────────────── */
         if (now < GATE_1_START) {
@@ -618,7 +600,7 @@
         }
 
         /* ────────────────────────────────────
-           PHASE 2 — performance is live
+           PHASE 2 — Gate 1 is live
            ──────────────────────────────────── */
         if (now >= GATE_1_START && now < GATE_1_END) {
           countdown1.textContent = OPEN_TEXT;
@@ -628,7 +610,7 @@
         }
 
         /* ────────────────────────────────────
-           PHASE 3 — post-performance, 24 h grace
+           PHASE 3 — Gate 1 closed, 24 h grace
            "The Gate Is Shut" alone
            ──────────────────────────────────── */
         if (now >= GATE_1_END && now < GATE_2_APPEARS_AT) {
@@ -639,15 +621,15 @@
         }
 
         /* ────────────────────────────────────
-           PHASE 4 — 24 h passed
-           Gate 1 stays "Shut", Gate 2 appears
+           PHASE 4 — Gate 2 block is now visible
+           Gate 1 stays "Shut"; Gate 2 countdown / open / shut
            ──────────────────────────────────── */
         countdown1.textContent = SHUT_TEXT;
         countdown1.style.display = "";
 
         countdown2.style.display = "";
 
-        if (GATE_2_TBD || !GATE_2_START || !GATE_2_END) {
+        if (GATE_2_TBD || GATE_2_START == null || GATE_2_END == null) {
           countdown2.textContent = LIMBO_TEXT;
         } else {
           if (now < GATE_2_START) {
@@ -655,53 +637,51 @@
           } else if (now >= GATE_2_START && now < GATE_2_END) {
             countdown2.textContent = OPEN_TEXT;
           } else {
+            /* Gate 2 is over → shut forever */
             countdown2.textContent = SHUT_TEXT;
           }
         }
       }
 
-      /* PORTAL GATE */
-      function computeState(nowMs) {
-        let enabled = false;
-        let activeUrl = null;
-
-        for (const w of WINDOWS_SGT) {
-          if (nowMs >= w.start && nowMs < w.end) {
-            enabled = true;
-            activeUrl = w.url;
-            break;
-          }
-        }
-
-        return { enabled, activeUrl };
-      }
-
       function updateCountdownAndGate() {
-        const now = Date.now();
-        const st = computeState(now);
-
-        portalLinkCircle.classList.toggle("enabled", st.enabled);
-
-        if (st.enabled && st.activeUrl) {
-          portalLinkCircle.href = st.activeUrl;
-          portalLinkCircle.setAttribute("aria-disabled", "false");
-        } else {
-          portalLinkCircle.href = "#";
-          portalLinkCircle.setAttribute("aria-disabled", "true");
-        }
-
         updateCountdowns();
+
+        const st = computeState(Date.now());
+
+        /* Toggle clickable state on whichever countdown represents the
+           currently-open gate. The countdown box itself is the portal. */
+        countdown1.classList.toggle("gateOpen", st.openGate === 1);
+        countdown2.classList.toggle("gateOpen", st.openGate === 2);
       }
 
-      portalLinkCircle.addEventListener("click", (e) => {
+      function openGateLink(url) {
+        if (url) window.open(url, "_blank", "noopener");
+      }
+
+      countdown1.addEventListener("click", () => {
         const st = computeState(Date.now());
-        if (!st.enabled || !st.activeUrl) e.preventDefault();
+        if (st.openGate === 1) openGateLink(st.url);
+      });
+      countdown2.addEventListener("click", () => {
+        const st = computeState(Date.now());
+        if (st.openGate === 2) openGateLink(st.url);
       });
 
       /* TRAIL */
       let cycleIndex = 0;
       let currentLayer = null;
       let trailRows = [];
+
+      /* Timestamp of the most recent cycle wrap. Old-cycle characters
+         (chars whose path entry was recorded before the current cycle)
+         fade from fully visible to transparent over FADE_DURATION_MS
+         starting from this moment. This lets the tail at the bottom
+         dissolve in place after the head wraps to the top, instead of
+         either (a) teleporting away abruptly or (b) hanging disconnected
+         for the ~6 seconds it would otherwise take the path buffer to
+         naturally roll those entries out of the rendered window. */
+      let wrapTime = -Infinity;
+      const FADE_DURATION_MS = 550;
 
       function applyCycleTheme() {
         const isBlack = cycleIndex % 2 === 0;
@@ -770,6 +750,7 @@
 
       function startNextCycleLayer() {
         cycleIndex++;
+        wrapTime = performance.now();
         createTrailLayer();
         setPortalThemeOppositeOfTrail();
       }
@@ -830,7 +811,7 @@
           headX = nextX;
         }
 
-        path.push({ x: headX, row: headRow });
+        path.push({ x: headX, row: headRow, cycle: cycleIndex });
 
         const maxLen = chars.length + 800;
         if (path.length > maxLen) path.splice(0, path.length - maxLen);
@@ -973,12 +954,23 @@
 
         const posByCharIndex = new Array(n);
 
+        /* Compute the in-place fade opacity for tail characters from the
+           previous cycle. Characters placed before the last wrap stay at
+           their recorded positions (the tail stays at the bottom where
+           it physically was) and simply fade from 1 to 0 over
+           FADE_DURATION_MS. Current-cycle characters always render at
+           full opacity. */
+        const now = performance.now();
+        const elapsed = now - wrapTime;
+        const fadeOpacity = Math.max(0, 1 - elapsed / FADE_DURATION_MS);
+
         for (let i = 0; i < n; i++) {
           const p = path[start + i];
           const el = chars[i];
 
           if (!p) {
             el.style.transform = "translate(-9999px,-9999px)";
+            el.style.opacity = "1";
             posByCharIndex[i] = null;
             continue;
           }
@@ -986,9 +978,19 @@
           const flip = p.row % 2 === 0 ? 1 : -1;
           const x = p.x;
           const y = p.row * ROW_H;
+          const opacity = p.cycle < cycleIndex ? fadeOpacity : 1;
 
           el.style.transform = `translate(${x}px, ${y}px) scale(${flip},${flip})`;
-          posByCharIndex[i] = { x, y, row: p.row };
+          el.style.opacity = String(opacity);
+
+          /* Once a tail character has nearly faded out, drop it from
+             hit-testing so the About/Home targets don't keep a clickable
+             footprint sitting invisibly at the bottom of the page. */
+          if (opacity > 0.5) {
+            posByCharIndex[i] = { x, y, row: p.row };
+          } else {
+            posByCharIndex[i] = null;
+          }
         }
 
         updateAboutHitAndHoverTarget(posByCharIndex);
